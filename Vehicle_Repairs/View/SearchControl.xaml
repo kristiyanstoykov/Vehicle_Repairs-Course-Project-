@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="Vehicle_Repairs.View.SearchControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Vehicle_Repairs.View"
+             xmlns:vm="clr-namespace:Vehicle_Repairs.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="850">
+    <UserControl.DataContext>
+        <vm:SearchViewModel />
+    </UserControl.DataContext>
+
+    <Grid ScrollViewer.CanContentScroll="True" Margin="0,50,0,50" Background="{StaticResource White}" Width="850">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title Bar -->
+        <TextBlock Grid.Row="0" Text="Vehicle Repairs Manager" FontSize="24" FontWeight="Bold" Margin="20" HorizontalAlignment="Center"/>
+
+        <!-- Search Area -->
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Content="Year (required)" Grid.Column="0" Grid.Row="0" FontWeight="SemiBold"
+                       Style="{StaticResource InputLabelStyle}" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                <TextBox Width="120" Text="{Binding RepairedYear, UpdateSourceTrigger=PropertyChanged}" 
+                    Style="{StaticResource InputTextBoxStyle}" PreviewTextInput="NumberValidationTextBox" Grid.Column="1" Grid.Row="0"/>
+
+                <Label Content="Brand" Grid.Column="0" Grid.Row="1" Margin="0,5,0,5" Style="{StaticResource InputLabelStyle}"
+                       VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                <TextBox Width="120" Text="{Binding Brand, UpdateSourceTrigger=PropertyChanged}" 
+                    Style="{StaticResource InputTextBoxStyle}" Grid.Column="1" Grid.Row="1"/>
+
+                <Label Content="Model" Grid.Column="0" Grid.Row="2" Style="{StaticResource InputLabelStyle}"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBox Width="120" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" 
+                    Style="{StaticResource InputTextBoxStyle}" Grid.Column="1" Grid.Row="2"/>
+            </Grid>
+
+
+            <!-- Buttons -->
+            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="100,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button Width="100" Content="Search" Command="{Binding SearchCommand}" Margin="5" Style="{StaticResource RoundedButtonStyle}"/>
+                <Button Width="100" Content="Clear" Command="{Binding ClearCommand}" Margin="5" Style="{StaticResource RoundedButtonStyle}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Search Results -->
+        <StackPanel Grid.Row="2" Orientation="Vertical" Width="830" Margin="0,0,0,20">
+            <StackPanel.Resources>
+                <!-- Alternating Row Background Style -->
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="White"/>
+                    <Style.Triggers>
+                        <Trigger Property="AlternationIndex" Value="1">
+                            <Setter Property="Background" Value="LightGray"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+                <!-- DataGrid Header Style -->
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="Padding" Value="5"/>
+                </Style>
+
+                <!-- DataGrid Style -->
+                <Style TargetType="DataGrid">
+                    <Setter Property="AutoGenerateColumns" Value="False"/>
+                    <Setter Property="IsReadOnly" Value="True"/>
+                    <Setter Property="Margin" Value="10"/>
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="AlternationCount" Value="2"/>
+                    <Setter Property="GridLinesVisibility" Value="None"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalGridLinesBrush" Value="Transparent"/>
+                    <Setter Property="VerticalGridLinesBrush" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Gray"/>
+                </Style>
+            </StackPanel.Resources>
+
+            <Line Stroke="Gray" X1="0" Y1="0" X2="830" Y2="0" StrokeThickness="5" Margin="10"/>
+            <TextBlock Text="Search Results" FontSize="24" FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
+            <DataGrid ItemsSource="{Binding Repairs}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="RepairID" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="Year of Service" Binding="{Binding YearOfService}"/>
+                    <DataGridTextColumn Header="Brand" Binding="{Binding Vehicle.Brand}"/>
+                    <DataGridTextColumn Header="Model" Binding="{Binding Vehicle.Model}"/>
+                    <DataGridTextColumn Header="Registration Number" Binding="{Binding Vehicle.RegistrationNumber}"/>
+                    <!-- DataGridTextColumn with text wrapping -->
+                    <DataGridTextColumn Header="Repair Description" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                <Setter Property="Text" Value="{Binding Description}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Grid>
+</UserControl>

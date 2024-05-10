@@ -1,0 +1,105 @@
+﻿<Application x:Class="Vehicle_Repairs.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Vehicle_Repairs"
+             StartupUri="View/Windows/MainWindow.xaml">
+    <Application.Resources>
+
+        <!--Colors-->
+        <SolidColorBrush x:Key="White" Color="#F3F4F8"/>
+        <SolidColorBrush x:Key="LightWhite" Color="#DAE2EC"/>
+        <Color x:Key="BlueColor">#1073c9</Color>
+        <SolidColorBrush x:Key="Blue" Color="{StaticResource BlueColor}"/>
+        <Color x:Key="DarkBlueColor">#2d4a63</Color>
+        <SolidColorBrush x:Key="DarkBlue" Color="{StaticResource DarkBlueColor}"/>
+
+        <!--Fonts-->
+        <FontFamily x:Key="PoppinsRegular">./Theme/Fonts/#Poppins-Regular</FontFamily>
+        <FontFamily x:Key="PoppinsMedium">./Theme/Fonts/#Poppins-Medium</FontFamily>
+        <FontFamily x:Key="PoppinsMediumItalic">./Theme/Fonts/#Poppins-MediumItalic</FontFamily>
+        <FontFamily x:Key="PoppinsBold">./Theme/Fonts/#Poppins-Bold</FontFamily>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsRegular}" />
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsRegular}" />
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource PoppinsRegular}" />
+        </Style>
+
+        <!-- Label Style -->
+        <Style x:Key="InputLabelStyle" TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,5,5,5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+        <!-- TextBox Style -->
+        <Style x:Key="InputTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        
+        <!-- Custom Button Style -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource Blue}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10"
+                            Padding="5">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource DarkBlueColor}" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                                        To="{StaticResource BlueColor}" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Application.Resources>
+</Application>
