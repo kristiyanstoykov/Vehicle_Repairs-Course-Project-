@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace Vehicle_Repairs.Database
 {
@@ -63,7 +65,7 @@ namespace Vehicle_Repairs.Database
             }
         }
 
-        public IEnumerable<Repair> SearchRepairs(string year, string brand, string model)
+        public IEnumerable<Repair> SearchRepairs(string year, string brand, string model, string repairDescription)
         {
             using (var context = new DatabaseContext())
             {
@@ -73,33 +75,91 @@ namespace Vehicle_Repairs.Database
                 // Convert year to an integer to perform comparison
                 int searchYear;
                 bool isYearValid = int.TryParse(year, out searchYear);
+                bool yearApplied = false;
 
-                if (isYearValid)
-                {
-                    // Filter the results by the closest year less than or equal to the given year if the exact match is not found
-                    var closestYearQuery = query.Where(c => c.YearOfService <= searchYear)
-                                                .OrderByDescending(c => c.YearOfService);
-                    if (closestYearQuery.Any())
-                    {
-                        // Update the query to limit it to the closest year available
-                        int closestYear = closestYearQuery.FirstOrDefault().YearOfService;
-                        query = closestYearQuery.Where(c => c.YearOfService == closestYear);
-                    }
-                }
-
+                // Apply filters for brand, model, and description
                 if (!string.IsNullOrWhiteSpace(brand))
                 {
-                    query = query.Where(c => EF.Functions.Like(c.Vehicle.Brand, $"%{brand}%"));
+                    query = query.Where(r => EF.Functions.Like(r.Vehicle.Brand, $"%{brand}%"));
                 }
 
                 if (!string.IsNullOrWhiteSpace(model))
                 {
-                    query = query.Where(c => EF.Functions.Like(c.Vehicle.Model, $"%{model}%"));
+                    query = query.Where(r => EF.Functions.Like(r.Vehicle.Model, $"%{model}%"));
+                }
+
+                if (!string.IsNullOrWhiteSpace(repairDescription))
+                {
+                    query = query.Where(r => EF.Functions.Like(r.Description, $"%{repairDescription}%"));
+                }
+
+                // Apply year filter and determine the closest year if valid
+                if (isYearValid)
+                {
+                    var filteredByYear = query.Where(r => r.YearOfService <= searchYear);
+                    if (filteredByYear.Any())
+                    {
+                        yearApplied = true;
+                        int closestYear = filteredByYear.OrderByDescending(r => r.YearOfService).First().YearOfService;
+                        query = filteredByYear.Where(r => r.YearOfService == closestYear);
+                    }
+                }
+
+                // If no year has been applied due to an invalid year or no results, handle by using the remaining filters
+                if (!yearApplied)
+                {
+                    if (!query.Any()) return Enumerable.Empty<Repair>();  // Return an empty collection if no repairs are found
+                    int closestYear = query.OrderByDescending(r => r.YearOfService).First().YearOfService;
+                    query = query.Where(r => r.YearOfService == closestYear);
                 }
 
                 return query.ToList();
             }
         }
+
+        public IEnumerable<T> Search<T>(
+            List<Expression<Func<T, bool>>> stringFilters,
+            Expression<Func<T, int>> yearExpr,
+            int? searchYear,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? includesExpr = null
+        ) where T : class
+        {
+            using (var context = new DatabaseContext())
+            {
+                var query = context.Set<T>().AsQueryable();
+
+                if (includesExpr != null)
+                {
+                    query = includesExpr(query);
+                }
+
+                foreach (var filter in stringFilters)
+                {
+                    query = query.Where(filter);
+                }
+
+                if (searchYear.HasValue)
+                {
+                    // This subquery fetches all years, then selects the closest one less than or equal to the search year
+                    var yearQuery = query.Select(yearExpr);
+                    var closestYear = yearQuery.Where(y => y <= searchYear.Value).OrderByDescending(y => y).FirstOrDefault();
+
+                    // Ensure that a valid year was found, otherwise return an empty collection
+                    if (closestYear == 0)
+                    {
+                        return Enumerable.Empty<T>();
+                    }
+                    
+                    var parameter = yearExpr.Parameters[0];
+                    var equalsClosestYear = Expression.Equal(yearExpr.Body, Expression.Constant(closestYear, typeof(int)));
+                    var lambda = Expression.Lambda<Func<T, bool>>(equalsClosestYear, parameter);
+                    query = query.Where(lambda);
+                }
+
+                return query.ToList();
+            }
+        }
+
 
     }
 }
