@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
@@ -18,7 +21,10 @@ namespace Vehicle_Repairs.ViewModel
         private string _repairedYear;
         private string _brand;
         private string _model;
+        private string _repairDescription;
         private DatabaseService dbService = new DatabaseService();
+        private bool _isRepairsEmpty = false;
+
 
         public ICommand SearchCommand
         {
@@ -33,16 +39,6 @@ namespace Vehicle_Repairs.ViewModel
             get
             {
                 return new DelegateCommand(ClearSearch);
-            }
-        }
-
-        public ObservableCollection<Vehicle> Vehicles
-        {
-            get => _vehicles;
-            set
-            {
-                _vehicles = value;
-                RaisePropertyChangedEvent(nameof(Vehicles));
             }
         }
 
@@ -63,8 +59,6 @@ namespace Vehicle_Repairs.ViewModel
             {
                 _repairedYear = value;
                 RaisePropertyChangedEvent(nameof(RepairedYear));
-                //SearchVehicles();
-                //SearchRepairs();
             }
         }
 
@@ -75,8 +69,6 @@ namespace Vehicle_Repairs.ViewModel
             {
                 _brand = value;
                 RaisePropertyChangedEvent(nameof(Brand));
-                //SearchVehicles();
-                //SearchRepairs();
             }
         }
 
@@ -87,34 +79,33 @@ namespace Vehicle_Repairs.ViewModel
             {
                 _model = value;
                 RaisePropertyChangedEvent(nameof(Model));
-                //SearchVehicles();
-                //SearchRepairs();
+            }
+        }
+
+        public string RepairDescription
+        {
+            get => _repairDescription;
+            set
+            {
+                _repairDescription = value;
+                RaisePropertyChangedEvent(nameof(RepairDescription));
+            }
+        }
+
+        public bool IsRepairsEmpty
+        {
+            get => _isRepairsEmpty;
+            set
+            {
+                _isRepairsEmpty = value;
+                RaisePropertyChangedEvent(nameof(IsRepairsEmpty));
             }
         }
 
         public SearchViewModel()
         {
-            Vehicles = new ObservableCollection<Vehicle>();
             Repairs = new ObservableCollection<Repair>();
-            LoadVehicles();
             LoadRepairs();
-        }
-
-        private void LoadVehicles()
-        {
-            try
-            {
-                var records = dbService.GetAllVehicles();
-                foreach (var record in records)
-                {
-                    Vehicles.Add(record);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle exceptions (e.g., logging)
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
         }
 
         private void LoadRepairs()
@@ -129,14 +120,42 @@ namespace Vehicle_Repairs.ViewModel
             }
             catch (Exception ex)
             {
-                // Handle exceptions (e.g., logging)
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
 
+        private void SearchRepairs2()
+        {
+            Repairs = new ObservableCollection<Repair>(dbService.SearchRepairs(_repairedYear, _brand, _model, _repairDescription));
+
+            IsRepairsEmpty = Repairs.Count == 0;
+        }
+
         private void SearchRepairs()
         {
-            Repairs = new ObservableCollection<Repair>(dbService.SearchRepairs(_repairedYear, _brand, _model));
+            var stringFilters = new List<Expression<Func<Repair, bool>>>();
+            int? searchYear = string.IsNullOrWhiteSpace(RepairedYear) ? null : int.Parse(RepairedYear);
+            Expression<Func<Repair, int>> yearExpr = r => r.YearOfService;
+            Func<IQueryable<Repair>, IIncludableQueryable<Repair, object>> include = query => query.Include(r => r.Vehicle);
+
+            if (!string.IsNullOrWhiteSpace(Brand))
+            {
+                stringFilters.Add(r => EF.Functions.Like(r.Vehicle.Brand, $"%{Brand}%"));
+            }
+
+            if (!string.IsNullOrWhiteSpace(Model))
+            {
+                stringFilters.Add(r => EF.Functions.Like(r.Vehicle.Model, $"%{Model}%"));
+            }
+
+            if (!string.IsNullOrWhiteSpace(RepairDescription))
+            {
+                stringFilters.Add(r => EF.Functions.Like(r.Description, $"%{RepairDescription}%"));
+            }
+
+            Repairs = new ObservableCollection<Repair>(dbService.Search<Repair>(stringFilters, yearExpr, searchYear, include));
+
+            IsRepairsEmpty = Repairs.Count == 0;
         }
 
         private void ClearSearch()
@@ -144,10 +163,10 @@ namespace Vehicle_Repairs.ViewModel
             RepairedYear = string.Empty;
             Brand = string.Empty;
             Model = string.Empty;
-            Vehicles.Clear();
+            RepairDescription = string.Empty;
             Repairs.Clear();
-            LoadVehicles();
             LoadRepairs();
+            IsRepairsEmpty = false;
         }
 
 
