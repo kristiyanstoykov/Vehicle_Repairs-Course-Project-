@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Vehicle_Repairs.View"
+             xmlns:converter="clr-namespace:Vehicle_Repairs.Converter"
              xmlns:vm="clr-namespace:Vehicle_Repairs.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="850">
@@ -11,11 +12,19 @@
         <vm:SearchViewModel />
     </UserControl.DataContext>
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converter:ReverseBooleanVisibilityConverter x:Key="ReverseBoolToVisibilityConverter"/>
+    </UserControl.Resources>
+
     <Grid ScrollViewer.CanContentScroll="True" Margin="0,50,0,50" Background="{StaticResource White}" Width="850">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Title Bar -->
@@ -38,6 +47,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Label Content="Year (required)" Grid.Column="0" Grid.Row="0" FontWeight="SemiBold"
@@ -54,6 +64,11 @@
                        VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 <TextBox Width="120" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" 
                     Style="{StaticResource InputTextBoxStyle}" Grid.Column="1" Grid.Row="2"/>
+
+                <Label Content="Repair Description" Grid.Column="0" Grid.Row="3" Style="{StaticResource InputLabelStyle}"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <TextBox Width="120" Text="{Binding RepairDescription, UpdateSourceTrigger=PropertyChanged}" 
+                    Style="{StaticResource InputTextBoxStyle}" Grid.Column="1" Grid.Row="3"/>
             </Grid>
 
 
@@ -64,8 +79,13 @@
             </StackPanel>
         </Grid>
 
+
+        <Line Grid.Row="2" Stroke="Gray" X1="0" Y1="0" X2="830" Y2="0" StrokeThickness="5" Margin="10"/>
+        <TextBlock Grid.Row="3" Text="Search Results" FontSize="24" FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
+
         <!-- Search Results -->
-        <StackPanel Grid.Row="2" Orientation="Vertical" Width="830" Margin="0,0,0,20">
+        <StackPanel Grid.Row="4" Orientation="Vertical" Width="Auto" Margin="0,0,0,20"
+            Visibility="{Binding IsRepairsEmpty, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
             <StackPanel.Resources>
                 <!-- Alternating Row Background Style -->
                 <Style TargetType="DataGridRow">
@@ -100,8 +120,6 @@
                 </Style>
             </StackPanel.Resources>
 
-            <Line Stroke="Gray" X1="0" Y1="0" X2="830" Y2="0" StrokeThickness="5" Margin="10"/>
-            <TextBlock Text="Search Results" FontSize="24" FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
             <DataGrid ItemsSource="{Binding Repairs}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="RepairID" Binding="{Binding Id}"/>
@@ -121,5 +139,54 @@
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
+
+        <!-- Appears when no exact match is found with BoolToVisibilityConverter -->
+        <Grid Grid.Row="5" HorizontalAlignment="Center"
+            Visibility="{Binding IsRepairsEmpty, Converter={StaticResource BoolToVisibilityConverter}}">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="200"/>
+                <!-- Adjusted for better alignment of inputs -->
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.ColumnSpan="2" Grid.Row="0" x:Name="NoMatchFoundText" 
+               Text="No exact matches found. Would you like to add a new repair?"
+               FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
+
+            <Label Content="Year (required)" Grid.Column="0" Grid.Row="1" FontWeight="SemiBold"
+                Style="{StaticResource InputLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <TextBox Width="200" Text="{Binding RepairedYear, UpdateSourceTrigger=PropertyChanged}" 
+                Style="{StaticResource InputTextBoxStyle}" Grid.Column="1" Grid.Row="1"
+                PreviewTextInput="NumberValidationTextBox"/>
+
+            <Label Content="Brand" Grid.Column="0" Grid.Row="2" Margin="0,5,0,5" 
+                Style="{StaticResource InputLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <TextBox Width="200" Text="{Binding Brand, UpdateSourceTrigger=PropertyChanged}" 
+                Style="{StaticResource InputTextBoxStyle}" Grid.Column="1" Grid.Row="2"/>
+
+            <Label Content="Model" Grid.Column="0" Grid.Row="3" 
+                Style="{StaticResource InputLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <TextBox Width="200" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" 
+                Style="{StaticResource InputTextBoxStyle}" Grid.Column="1" Grid.Row="3"/>
+
+            <Label Content="Repair Description" Grid.Column="0" Grid.Row="4" 
+                Style="{StaticResource InputLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <TextBox Width="200" Text="{Binding RepairDescription, UpdateSourceTrigger=PropertyChanged}" 
+                Style="{StaticResource InputTextBoxStyle}" Grid.Column="1" Grid.Row="4"/>
+
+            <Button Grid.ColumnSpan="2" Grid.Row="5" x:Name="AddRepairButton" Content="Add New Repair" Command="{Binding AddNewRepairCommand}"
+                Margin="20,10" Style="{StaticResource RoundedButtonStyle}" HorizontalAlignment="Center"/>
+        </Grid>
+
     </Grid>
 </UserControl>
