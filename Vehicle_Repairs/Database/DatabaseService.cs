@@ -160,6 +160,25 @@ namespace Vehicle_Repairs.Database
             }
         }
 
-
+        public void AddRepair(Repair repair, Vehicle vehicle)
+        {
+            using (var context = new DatabaseContext())
+            {
+                var existingVehicle = context.Vehicles.FirstOrDefault(v => v.RegistrationNumber == vehicle.RegistrationNumber);
+                if (existingVehicle == null)
+                {
+                    context.Vehicles.Add(vehicle);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    vehicle = existingVehicle;
+                }
+                
+                repair.VehicleId = vehicle.Id;
+                context.Repairs.Add(repair);
+                context.SaveChanges();
+            }
+        }
     }
 }
