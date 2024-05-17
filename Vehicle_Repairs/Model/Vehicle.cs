@@ -26,5 +26,7 @@ namespace Vehicle_Repairs.Model
         public required string RegistrationNumber { get; set; }
 
         public virtual ICollection<Repair>? Repairs { get; set; }
+
+        public Vehicle() { }
     }
 }

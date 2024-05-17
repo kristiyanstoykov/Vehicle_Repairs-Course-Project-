@@ -23,5 +23,16 @@ namespace Vehicle_Repairs.Model
 
         public int VehicleId { get; set; }
         public Vehicle Vehicle { get; set; }
+
+        public Repair() { }
+
+        public Repair(int yearOfService, string serviceType, string description, int vehicleId, Vehicle vehicle)
+        {
+            YearOfService = yearOfService;
+            ServiceType = serviceType;
+            Description = description;
+            VehicleId = vehicleId;
+            Vehicle = vehicle;
+        }
     }
 }
