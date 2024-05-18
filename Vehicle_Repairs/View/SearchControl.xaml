@@ -13,7 +13,6 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <converter:ReverseBooleanVisibilityConverter x:Key="ReverseBoolToVisibilityConverter"/>
-        <controls:AddRepairControl x:Key="AddRepairControl"/>
     </UserControl.Resources>
 
     <Grid>
@@ -139,10 +138,7 @@
             </DataGrid>
         </StackPanel>
 
-        <!-- Appears when no exact match is found with BoolToVisibilityConverter -->
-        <!--<controls:AddRepairControl Grid.Row="5" HorizontalAlignment="Center"
-            DataContext="{Binding AddRepairViewModel}"
-            Visibility="{Binding IsRepairsEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />-->
+        
 
     </Grid>
 </UserControl>
