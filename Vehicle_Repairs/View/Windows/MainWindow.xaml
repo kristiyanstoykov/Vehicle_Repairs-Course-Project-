@@ -5,11 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Vehicle_Repairs"
         xmlns:components="clr-namespace:Vehicle_Repairs.View"
+        xmlns:controls="clr-namespace:Vehicle_Repairs.View.Controls"
+        xmlns:vm="clr-namespace:Vehicle_Repairs.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="900">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{DynamicResource LightWhite}">
-            <components:SearchControl />
+        Title="MainWindow" Height="450" Width="900"
+        x:Name="MainWindowData">
+    
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+    
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"  Background="{DynamicResource LightWhite}" >
+        <Grid ScrollViewer.CanContentScroll="True" Margin="0,50,0,50" Background="{StaticResource White}" Width="850">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <components:SearchControl Grid.Row="0" DataContext="{Binding SearchViewModel}" />
+            <controls:AddRepairControl
+                Grid.Row="1"
+                DataContext="{Binding AddRepairViewModel}"
+                HorizontalAlignment="Center"
+                Visibility="{Binding DataContext.IsAddRepairVisible, ElementName=MainWindowData, Converter={StaticResource BoolToVisibilityConverter}}"
+            />
         </Grid>
     </ScrollViewer>
 </Window>
