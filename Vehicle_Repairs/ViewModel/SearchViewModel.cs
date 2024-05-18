@@ -20,15 +20,9 @@ namespace Vehicle_Repairs.ViewModel
         private ObservableCollection<Vehicle> _vehicles;
         private ObservableCollection<Repair> _repairs;
         private string _repairedYear;
-        private string _yearOfServiceToAdd;
         private string _brand;
-        private string _brandToAdd;
         private string _model;
-        private string _modelToAdd;
         private string _repairDescription;
-        private string _repairDescriptionToAdd;
-        private string _registrationNumberToAdd;
-        private string _yearMadeToAdd;
         private DatabaseService dbService = new DatabaseService();
         private bool _isRepairsEmpty = false;
 
@@ -116,65 +110,6 @@ namespace Vehicle_Repairs.ViewModel
             }
         }
 
-        public string BrandToAdd
-        {
-            get => _brandToAdd;
-            set
-            {
-                _brandToAdd = value;
-                RaisePropertyChangedEvent(nameof(BrandToAdd));
-            }
-        }
-
-        public string ModelToAdd
-        {
-            get => _modelToAdd;
-            set
-            {
-                _modelToAdd = value;
-                RaisePropertyChangedEvent(nameof(ModelToAdd));
-            }
-        }
-
-        public string RepairDescriptionToAdd
-        {
-            get => _repairDescriptionToAdd;
-            set
-            {
-                _repairDescriptionToAdd = value;
-                RaisePropertyChangedEvent(nameof(RepairDescriptionToAdd));
-            }
-        }
-
-        public string YearOfServiceToAdd
-        {
-            get => _yearOfServiceToAdd;
-            set
-            {
-                _yearOfServiceToAdd = value;
-                RaisePropertyChangedEvent(nameof(YearOfServiceToAdd));
-            }
-        }
-
-        public string RegistrationNumberToAdd
-        {
-            get => _registrationNumberToAdd;
-            set
-            {
-                _registrationNumberToAdd = value;
-                RaisePropertyChangedEvent(nameof(RegistrationNumberToAdd));
-            }
-        }
-
-        public string YearMadeToAdd
-        {
-            get => _yearMadeToAdd;
-            set
-            {
-                _yearMadeToAdd = value;
-                RaisePropertyChangedEvent(nameof(YearMadeToAdd));
-            }
-        }
 
         private void LoadRepairs()
         {
@@ -237,10 +172,6 @@ namespace Vehicle_Repairs.ViewModel
             Brand = string.Empty;
             Model = string.Empty;
             RepairDescription = string.Empty;
-            YearOfServiceToAdd = string.Empty;
-            BrandToAdd = string.Empty;
-            ModelToAdd = string.Empty;
-            RepairDescriptionToAdd = string.Empty;
             IsRepairsEmpty = false;
             Repairs.Clear();
             LoadRepairs();
