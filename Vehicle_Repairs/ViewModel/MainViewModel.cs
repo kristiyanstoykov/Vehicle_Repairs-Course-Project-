@@ -40,7 +40,7 @@ namespace Vehicle_Repairs.ViewModel
         public void Clear()
         {
             HideAddRepairControl();
-            SearchViewModel.ClearSearchProps();
+            SearchViewModel.ClearProps();
             AddRepairViewModel.ClearProps();
         }
 

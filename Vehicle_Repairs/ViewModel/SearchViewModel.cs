@@ -166,7 +166,7 @@ namespace Vehicle_Repairs.ViewModel
             }
         }
 
-        public void ClearSearchProps()
+        public void ClearProps()
         {
             RepairedYear = string.Empty;
             Brand = string.Empty;
