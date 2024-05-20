@@ -44,6 +44,11 @@ namespace Vehicle_Repairs.ViewModel
             AddRepairViewModel.ClearProps();
         }
 
+        public void ClearAddRepairProps()
+        {
+            AddRepairViewModel.ClearProps();
+        }
+
         public void ShowAddRepairControl()
         {
             IsAddRepairVisible = true;
