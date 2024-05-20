@@ -164,6 +164,11 @@ namespace Vehicle_Repairs.ViewModel
                 _mainViewModel.UpdateAddRepairProps(RepairedYear, Brand, Model, RepairDescription);
                 _mainViewModel.ShowAddRepairControl();
             }
+            else
+            {
+                _mainViewModel.HideAddRepairControl();
+                _mainViewModel.ClearAddRepairProps();
+            }
         }
 
         public void ClearProps()
