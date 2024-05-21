@@ -25,6 +25,7 @@ namespace Vehicle_Repairs.ViewModel
         private string _repairDescription;
         private DatabaseService dbService = new DatabaseService();
         private bool _isRepairsEmpty = false;
+        private bool _isExactMatch = true;
 
 
         public SearchViewModel(MainViewModel mainViewModel)
@@ -110,6 +111,15 @@ namespace Vehicle_Repairs.ViewModel
             }
         }
 
+        public bool IsExactMatch
+        {
+            get => _isExactMatch;
+            set
+            {
+                _isExactMatch = value;
+                RaisePropertyChangedEvent(nameof(IsExactMatch));
+            }
+        }
 
         private void LoadRepairs()
         {
@@ -159,15 +169,32 @@ namespace Vehicle_Repairs.ViewModel
             Repairs = new ObservableCollection<Repair>(dbService.Search<Repair>(stringFilters, yearExpr, searchYear, include));
 
             IsRepairsEmpty = Repairs.Count == 0;
+
             if (IsRepairsEmpty)
             {
-                _mainViewModel.UpdateAddRepairProps(RepairedYear, Brand, Model, RepairDescription);
-                _mainViewModel.ShowAddRepairControl();
+                IsExactMatch = false;
             }
             else
             {
+                if(searchYear == Repairs.First().YearOfService)
+                {
+                    IsExactMatch = true;
+                }
+                else
+                {
+                    IsExactMatch = false;
+                }
+            }
+
+            if (IsExactMatch)
+            {
                 _mainViewModel.HideAddRepairControl();
                 _mainViewModel.ClearAddRepairProps();
+            }
+            else
+            {
+                _mainViewModel.UpdateAddRepairProps(RepairedYear, Brand, Model, RepairDescription);
+                _mainViewModel.ShowAddRepairControl();
             }
         }
 
@@ -178,6 +205,7 @@ namespace Vehicle_Repairs.ViewModel
             Model = string.Empty;
             RepairDescription = string.Empty;
             IsRepairsEmpty = false;
+            IsExactMatch = true;
             Repairs.Clear();
             LoadRepairs();
         }
