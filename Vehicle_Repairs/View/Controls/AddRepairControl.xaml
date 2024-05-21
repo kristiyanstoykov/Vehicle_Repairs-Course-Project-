@@ -16,7 +16,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -32,7 +32,7 @@
 
         <TextBlock Grid.ColumnSpan="2" Grid.Row="0" x:Name="NoMatchFoundText" 
             Text="No exact matches found. Would you like to add a new repair?"
-            FontWeight="Bold" Margin="10" HorizontalAlignment="Center"/>
+            FontWeight="Bold" FontSize="18" Margin="10" HorizontalAlignment="Center"/>
 
         <Label Content="Year repaired" Grid.Column="0" Grid.Row="1" FontWeight="SemiBold"
             Style="{StaticResource InputLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
