@@ -12,11 +12,13 @@ namespace Vehicle_Repairs.ViewModel
         private bool _isAddRepairVisible = false;
         public SearchViewModel SearchViewModel { get; set; }
         public AddRepairViewModel AddRepairViewModel { get; set; }
+        public SearchVehicleVM SearchVehicleViewModel { get; set; }
 
         public MainViewModel()
         {
             SearchViewModel = new SearchViewModel(this);
             AddRepairViewModel = new AddRepairViewModel(this);
+            SearchVehicleViewModel = new SearchVehicleVM();
         }
 
         public bool IsAddRepairVisible
