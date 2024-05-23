@@ -137,12 +137,6 @@ namespace Vehicle_Repairs.ViewModel
             }
         }
 
-        private void SearchRepairs2()
-        {
-            Repairs = new ObservableCollection<Repair>(dbService.SearchRepairs(_repairedYear, _brand, _model, _repairDescription));
-
-            IsRepairsEmpty = Repairs.Count == 0;
-        }
 
         private void SearchRepairs()
         {
