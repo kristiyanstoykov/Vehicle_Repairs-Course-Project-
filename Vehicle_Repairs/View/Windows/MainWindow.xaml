@@ -21,18 +21,27 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"  Background="{DynamicResource LightWhite}" >
         <Grid ScrollViewer.CanContentScroll="True" Margin="0,50,0,50" Background="{StaticResource White}" Width="850">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+            <TabControl>
+                <TabItem Header="Search and Add Repair">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-            <components:SearchControl Grid.Row="0" DataContext="{Binding SearchViewModel}" />
-            <controls:AddRepairControl
-                Grid.Row="1"
-                DataContext="{Binding AddRepairViewModel}"
-                HorizontalAlignment="Center"
-                Visibility="{Binding DataContext.IsAddRepairVisible, ElementName=MainWindowData, Converter={StaticResource BoolToVisibilityConverter}}"
-            />
+                        <components:SearchControl Grid.Row="0" DataContext="{Binding SearchViewModel}" />
+                        <controls:AddRepairControl
+                            Grid.Row="1"
+                            DataContext="{Binding AddRepairViewModel}"
+                            HorizontalAlignment="Center"
+                            Visibility="{Binding DataContext.IsAddRepairVisible, ElementName=MainWindowData, Converter={StaticResource BoolToVisibilityConverter}}"
+                        />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Search by vehicle">
+                    <controls:SearchVehicleView DataContext="{Binding SearchVehicleViewModel}" />
+                </TabItem>
+            </TabControl>
         </Grid>
     </ScrollViewer>
 </Window>
