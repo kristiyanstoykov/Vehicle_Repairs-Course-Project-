@@ -20,7 +20,7 @@ namespace Vehicle_Repairs.Model
         [Required]
         public required string Model { get; set; }
 
-        public int? YearMade { get; set; }
+        public int YearMade { get; set; }
 
         [Required]
         public required string RegistrationNumber { get; set; }
