@@ -138,7 +138,5 @@
             </DataGrid>
         </StackPanel>
 
-        
-
     </Grid>
 </UserControl>
